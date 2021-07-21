@@ -1,18 +1,9 @@
 html{height:100%;}
 
-.header{
-    background-color: #ffe4c4;
-    min-height:100%;
-    position:relative;
-    color: #1505a0;
-    font-size: 22px;
-    text-align: center;
-}
-
 /* main的padding-bottom值要等于或大于footer的height值 */
 main{
     padding-bottom:100px;
-    background-color: #bdb76b;
+    /* background-color: #bdb76b; */
 }
 
 body{
@@ -22,6 +13,9 @@ body{
     position:relative;
     display: flex;
     flex-direction: column;
+    background-color: #363B40;
+    color: #b8bfc6;
+    font-size: 22px;
 }
 
 footer{
@@ -34,4 +28,18 @@ footer{
     font-size: 12px;
     text-align: center;
     /* padding: 10px; */
+}
+
+.header{
+    background-color: #ffe4c4;
+    min-height:100%;
+    position:relative;
+    background-color: #363B40;
+    color: #b8bfc6;
+    font-size: 32px;
+    text-align: center;
+}
+
+.text{
+    color: #b8bfc6;
 }
