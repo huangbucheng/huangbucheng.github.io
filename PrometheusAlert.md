@@ -8,8 +8,10 @@ kubectl create serviceaccount monitor -n monitor-sa
 kubectl create clusterrolebinding moniror-clusterrolebinding -n monitor-sa --clusterrole=cluster-admin --serviceaccount=monitor-sa:monitor
 
 ## 2. 创建数据挂载目录
+```shell
 mkdir /data/ginfra/prom /data/ginfra/grafana /data/ginfra/alertmanager
 chmod 0777 /data/ginfra/prom /data/ginfra/grafana /data/ginfra/alertmanager
+```
 
 ## 3. 准备yaml: prom.yaml, grafana.yaml, alert.yaml
 ### 部署Prometheus和AlertManager
