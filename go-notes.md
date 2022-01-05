@@ -21,3 +21,10 @@ if out, err = cmd.CombinedOutput(); err != nil {
     fmt.Println(err)
 }
 ```
+
+## 操作excel文件
+之前使用该库`github.com/tealeg/xlsx/v3`操作excel文件，遇到2个问题：
+1. 有些情况下，excel文件部分单元格存在特殊格式，导致读取该单元格数据为空；
+2. 在服务器环境创建的excel文件，在Windows环境打开，有数据的行全部显示不出来，表单第一个行号从无数据行开始（WSL的ubuntu环境未复现该问题）；
+
+之后切换到新库`github.com/xuri/excelize/v2`，以上问题不存在。
