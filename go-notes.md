@@ -39,6 +39,9 @@ if out, err = cmd.CombinedOutput(); err != nil {
 业务背景：从题库中，按照tag要求，随机抽取一定数量的题目。
 
 gorm关键知识点：子查询`subquery` 和 随机排序`Order("RAND()")`的用法。
+
+[Tags-Database-schemas](http://howto.philippkeller.com/2005/04/24/Tags-Database-schemas/)
+
 ```go
 /* 根据tag从题库中随机抽题
  * @param incltags: 需满足的tag集
