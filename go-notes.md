@@ -28,3 +28,64 @@ if out, err = cmd.CombinedOutput(); err != nil {
 2. 在服务器环境创建的excel文件，在Windows环境打开，有数据的行全部显示不出来，表单第一个行号从无数据行开始（WSL的ubuntu环境未复现该问题）；
 
 之后切换到新库`github.com/xuri/excelize/v2`，以上问题不存在。
+
+## time.Since 注意事项
+在使用`time.Since`进行时长比较时，有2种情况注意区分：
+1. `time.Since` 与 `time.Duration`（预定义的`time.Second`等 或 通过`time.ParseDuration`解析得到的`time.Duration`）比较OK；
+2. `time.Since` 与 `time.Duration(int)` 比较，容易有时间单位不一致的问题，此时的解决办法是对齐单位，如：`time.Since().Second()` 与 `time.Duration(int)`；
+
+## gorm 用例
+### 基于tag的查询 & 随机查询
+业务背景：从题库中，按照tag要求，随机抽取一定数量的题目。
+gorm关键知识点：子查询`subquery` 和 随机排序`Order("RAND()")`的用法。
+```go
+/* 根据tag从题库中随机抽题
+ * @param incltags: 需满足的tag集
+ * @param commtags: 需满足的tag集（基于业务场景与incltags分别传递）
+ * @param excltags: 不能包含的tag集
+ * @param exclqaids: 排除的题目集
+ * @param limit: 抽题数量
+ * @return: 抽取的题目ID列表, error
+ */
+func extractQasByTags(ctx context.Context, incltags, commtags, excltags [][]interface{}, exclqaids []string, limit int) ([]string, error) {
+	var qaids []string
+	var qatags []models.QaTag
+	db, _ := datasource.Gormv2(ctx)
+	query := db.Model(&models.QaTag{}).Select("t_qa_tag.qa_id")
+
+	if len(incltags) > 0 {
+		query = query.Where("(tag_label, tag_value) IN ?", incltags)
+	}
+
+	if len(commtags) > 0 {
+		subquery := db.Table("t_qa_tag").Select("qa_id").
+			Where("(tag_label, tag_value) IN ?", commtags).
+			Group("qa_id").Having("COUNT(qa_id) = ?", len(commtags))
+		query = query.Where("qa_id IN (?) ", subquery)
+	}
+
+	if len(excltags) > 0 {
+		subquery := db.Table("t_qa_tag").Select("qa_id").
+			Where("(tag_label, tag_value) IN ?", excltags)
+		query = query.Where("qa_id NOT IN (?) ", subquery)
+	}
+
+	if len(exclqaids) > 0 {
+		query = query.Where("qa_id NOT IN ? ", exclqaids)
+	}
+
+	if len(incltags) > 0 {
+		query = query.Group("qa_id").Having("COUNT(qa_id) = ?", len(incltags))
+	}
+	query = query.Order("RAND()").Limit(limit).Offset(0)
+	err := query.Find(&qatags).Error
+	if err != nil {
+		return qaids, err
+	}
+
+	for _, tag := range qatags {
+		qaids = append(qaids, tag.QaID)
+	}
+	return qaids, nil
+}
+```
