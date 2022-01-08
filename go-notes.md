@@ -37,6 +37,7 @@ if out, err = cmd.CombinedOutput(); err != nil {
 ## gorm 用例
 ### 基于tag的查询 & 随机查询
 业务背景：从题库中，按照tag要求，随机抽取一定数量的题目。
+
 gorm关键知识点：子查询`subquery` 和 随机排序`Order("RAND()")`的用法。
 ```go
 /* 根据tag从题库中随机抽题
