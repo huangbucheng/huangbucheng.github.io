@@ -128,3 +128,21 @@ func get_activities_and_user_status(ctx context.Context, uid string, limit, offs
 	return statuses, total, nil
 }
 ```
+## gomonkey
+### panic: retrieve method by name failed
+`go test --cover -v ./...` 运行单元测试，报错：`panic: retrieve method by name failed`
+```go
+	patches := gomonkey.ApplyMethod(reflect.TypeOf(c), "Load", func(c *caches.GlobalCache) error {
+		return nil
+	})
+	patches = patches.ApplyMethod(reflect.TypeOf(&models.QABase{}), "Get", func(p *models.QABase, db *gorm.DB, qaid string) error {
+		p.QaID = qaid
+		return nil
+	})
+	defer patches.Reset()
+```
+**Cause**
+gomonkey fails to patch a function or a member method if inlining is enabled, please running your tests with inlining disabled by adding the command line argument that is -gcflags=-l(below go1.10) or -gcflags=all=-l(go1.10 and above).
+
+**SLN**
+`go test -gcflags=all=-l --cover -v ./...` 
