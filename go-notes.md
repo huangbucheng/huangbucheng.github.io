@@ -1,5 +1,7 @@
 # go 编程纪要
 
+[TOC]
+
 ## Go语言中Kill子进程的正确姿势
 使用exec.Process.Kill子进程示例如下：
 ```go
