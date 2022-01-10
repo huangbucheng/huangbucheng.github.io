@@ -142,7 +142,9 @@ func get_activities_and_user_status(ctx context.Context, uid string, limit, offs
 	defer patches.Reset()
 ```
 **Cause**
+
 gomonkey fails to patch a function or a member method if inlining is enabled, please running your tests with inlining disabled by adding the command line argument that is -gcflags=-l(below go1.10) or -gcflags=all=-l(go1.10 and above).
 
 **SLN**
+
 `go test -gcflags=all=-l --cover -v ./...` 
