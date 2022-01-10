@@ -93,3 +93,38 @@ func extractQasByTags(ctx context.Context, incltags, commtags, excltags [][]inte
 	return qaids, nil
 }
 ```
+### Join - 1 v N场景下的left join
+业务背景：翻页查询所有活动列表，并且返回用户在活动中的状态，尚未未参加的活动也需要返回。
+
+SQL关键知识点：`left join` 以及 `join on` 中附带条件过滤
+
+```go
+/* 查询level类型的activity，以及uid在activity中的状态，未参加的activity也返回。
+ * @param uid：用户id
+ * @return：activity状态列表，总activity数，error
+ */
+func get_activities_and_user_status(ctx context.Context, uid string, limit, offset int) ([]UserActivityStatus, int64, error) {
+	var total int64
+	var statuses []UserActivityStatus
+	
+	db, _ := datasource.Gormv2(ctx)
+	query := db.Model(&models.GameActivity{}).
+		Select("t_game_activity.id, t_game_activity.Name, t_game_user.uid, t_game_user.user_status").
+		Joins("left join t_game_user on t_game_user.activity_id = t_game_activity.id AND t_game_user.uid = ? AND t_game_user.user_type = ?",
+			uid, models.USER_TYPE_NORMAL).
+		Where("t_game_activity.activity_type = ?", "level")
+
+	err := query.Session(&gorm.Session{PrepareStmt: true}).Distinct("t_game_activity.id").Count(&total).Error
+	if err != nil {
+		return nil, total, err
+	}
+
+	query = query.Order("t_game_activity.created_at desc")
+	err = query.Limit(limit).Offset(offset).Scan(&statuses).Error
+	if err != nil {
+		return nil, total, err
+	}
+	
+	return statuses, total, nil
+}
+```
