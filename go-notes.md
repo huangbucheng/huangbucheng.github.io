@@ -130,6 +130,7 @@ func get_activities_and_user_status(ctx context.Context, uid string, limit, offs
 ```
 ### FirstOrCreate RowsAffected 问题
 问题背景：业务中根据`FirstOrCreate`返回的`RowsAffected`，决定是否再调用`Updates`更新部分字段。正常运行几个月后，突然出现`RowsAffected`一直返回`1`的问题。
+
 原因：未决。
 
 ## gomonkey
