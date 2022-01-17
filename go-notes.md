@@ -137,6 +137,9 @@ issue: https://github.com/go-gorm/gorm/issues/4996
 
 FirstOrCreate(gorm@v1.22.2) return RowsAffected with value 0 when record already exist.
 
+### utf8-mb4
+TODO
+
 ## gomonkey
 ### panic: retrieve method by name failed
 `go test --cover -v ./...` 运行单元测试，报错：`panic: retrieve method by name failed`
