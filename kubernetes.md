@@ -28,4 +28,7 @@ curl: (52) Empty reply from server
 
 ### 解析
 从服务日志看，请求正常处理完成，但是在web框架中，处理完请求后会上报请求结果状态数据至 监控平台，上报监控平台走的是外网。而腾讯云虚拟节点默认是没有外网访问能力的。
+
 解决办法：[弹性容器服务（Elastic Kubernetes Service，EKS）支持通过配置 NAT 网关 和 路由表 来实现集群内服务访问外网](https://cloud.tencent.com/document/product/457/48710)
+
+
