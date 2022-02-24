@@ -191,6 +191,12 @@ spec:
 
 腾讯云容器服务 TKE 中，需要为TKE集群安装NetworkPolicy组件，可参考官方指引 [使用 Network Policy 进行网络访问控制](https://cloud.tencent.com/document/product/457/19793) 。
 
+### Job调度至虚拟节点的网络策略问题
+由于networkpolicy组件，是通过daemonset的pod来进行网络策略控制的，但是腾讯云虚拟节点不支持daemonset，networkpolicy对虚拟节点上的pod不生效。
+
+解决办法：虚拟节点上 每个pod都可以配置安全组，如果不配置，默认是使用default安全组，可以单独创建个安全组，然后给调度到虚拟节点的pod 添加 spec.template.metadata.annotations（eks.tke.cloud.tencent.com/security-group-id: sg-xxxxxx）
+https://cloud.tencent.com/document/product/457/44173
+
 ## 用户代码运行环境裁剪
 用户代码运行环境应遵循最小可用原则，非必需的库、命令行工具都可以裁剪掉。
 一般可以把 `ping`, `telnet`, `netstat`, `ss`, `ifconfig`, `nmap`, `lsof`, `nc`, `tcpdump`, `curl`, `wget` 等工具都删除掉。
