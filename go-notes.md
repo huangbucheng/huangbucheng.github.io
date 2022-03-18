@@ -23,11 +23,22 @@ if out, err = cmd.CombinedOutput(); err != nil {
 ```
 
 ## 操作excel文件
+### excel 写文件问题
 之前使用该库`github.com/tealeg/xlsx/v3`操作excel文件，遇到2个问题：
 1. 有些情况下，excel文件部分单元格存在特殊格式，导致读取该单元格数据为空；
 2. 在服务器环境创建的excel文件，在Windows环境打开，有数据的行全部显示不出来，表单第一个行号从无数据行开始（WSL的ubuntu环境未复现该问题）；
 
 之后切换到新库`github.com/xuri/excelize/v2`，以上问题不存在。
+
+### 单元格式-日期 解析
+单元格的格式是日期时，读取出来的内容是：当前日期距离1900-00-01的天数，例如 2011/07/27 读取出来是 40751。
+
+解析日期的示例：
+```go
+	excelTime := time.Date(1899, time.December, 30, 0, 0, 0, 0, time.UTC)
+	days, _ := strconv.Atoi(excelDate)
+	t := excelTime.Add(time.Second * time.Duration(days*86400))
+```
 
 ## time.Since 注意事项
 在使用`time.Since`进行时长比较时，有2种情况注意区分：
