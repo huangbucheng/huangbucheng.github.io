@@ -104,6 +104,33 @@ func extractQasByTags(ctx context.Context, incltags, commtags, excltags [][]inte
 	return qaids, nil
 }
 ```
+### Order - 自定义排序
+业务背景：查询结果排序规则稍微复杂一些。例如，查询用户参加的赛事列表，排序规则为：
+
+1. 进行中的赛事，按照自定义的sortkey排序；
+2. 已结束的赛事，排在后面，并按时间倒序排列；
+
+SQL关键知识点：`ORDER BY FIELD`, `ORDER BY CASE WHEN THEN ELSE END`
+
+#### `ORDER BY FIELD`
+fruit 表有一个 name 字段，具有以下特定的值：苹果(Apple)，香蕉(Banana)，橘子(Orange)，梨(Pear)，每个特定的值都有一系列的品种。
+
+我们要按香蕉，苹果，梨，橘子等特定的顺序排列数据, 然后再按品种排序：
+```sql
+SELECT * FROM fruit
+ORDER BY FIELD(name, 'Banana', 'Apple', 'Pear', 'Orange'), variety;
+```
+【参考】(https://lingchao.xin/post/ordering-by-specific-field-values-with-mysql.html)
+
+#### `ORDER BY CASE WHEN THEN ELSE END`
+实现上述业务背景场景：
+
+1. 进行中的赛事，按照自定义的sortkey排序；
+2. 已结束的赛事，排在后面，并按时间倒序排列；
+```sql
+select * from t_match_config order by CASE WHEN `end_time` > now() then `id` ELSE 999999999 END ASC, created_at desc;
+```
+
 ### Join - 1 v N场景下的left join
 业务背景：翻页查询所有活动列表，并且返回用户在活动中的状态，尚未未参加的活动也需要返回。
 
