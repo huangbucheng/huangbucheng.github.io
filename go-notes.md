@@ -130,6 +130,7 @@ ORDER BY FIELD(name, 'Banana', 'Apple', 'Pear', 'Orange'), variety;
 ```sql
 select * from t_match_config order by CASE WHEN `end_time` > now() then `id` ELSE 999999999 END ASC, created_at desc;
 ```
+【参考】(https://learnsql.com/blog/order-by-specific-value/)
 
 ### Join - 1 v N场景下的left join
 业务背景：翻页查询所有活动列表，并且返回用户在活动中的状态，尚未未参加的活动也需要返回。
