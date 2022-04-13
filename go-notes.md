@@ -176,6 +176,23 @@ issue: https://github.com/go-gorm/gorm/issues/4996
 
 FirstOrCreate(gorm@v1.22.2) return RowsAffected with value 0 when record already exist.
 
+### FirstOrCreate 并发问题
+问题背景：业务中经常使用`FirstOrCreate`来创建或查询数据，之前想当然以为`FirstOrCreate`是原子操作，可是在实际场景中，时常出现并发问题：
+`Error 1062: Duplicate entry 'xxx' for key 'index-xxx'`
+
+原因：从gorm debug日志可以看出，`FirstOrCreate`是先执行SELECT，不存在的情况下再执行INSERT。为了正确处理INSERT并发导致的`Duplicate entry`问题，程序中需要检查db.Error：
+```
+	rdb := db.FirstOrCreate(s, &AModel{Key: 123456})
+	if rdb.Error != nil {
+		var mysqlErr *mysql.MySQLError
+		if errors.As(rdb.Error, &mysqlErr) && mysqlErr.Number == 1062 {
+			return 0, nil
+		}
+		return 0, rdb.Error
+	}
+	return rdb.RowsAffected, rdb.Error
+```
+
 ### utf8-mb4
 TODO
 
