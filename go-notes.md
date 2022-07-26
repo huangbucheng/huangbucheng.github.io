@@ -46,6 +46,27 @@ if out, err = cmd.CombinedOutput(); err != nil {
 2. `time.Since` 与 `time.Duration(int)` 比较，容易有时间单位不一致的问题，此时的解决办法是对齐单位，如：`time.Since().Second()` 与 `time.Duration(int)`；
 
 ## gorm 用例
+### IgnoreRecordNotFoundError 忽略RecordNotFound日志
+```go
+	l := logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{
+		SlowThreshold:             200 * time.Millisecond,
+		LogLevel:                  lv,
+		IgnoreRecordNotFoundError: true,
+		Colorful:                  true,
+	})
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: l,
+		NamingStrategy: schema.NamingStrategy{
+			// table name prefix, table for `User` would be `t_users`
+			TablePrefix: "t_",
+			// use singular table name, table for `User` would be `user` with this option enabled
+			SingularTable: true,
+			// use name replacer to change struct/field name before convert it to db name
+			NameReplacer: strings.NewReplacer("CID", "Cid"),
+		},
+	})
+```
 ### 基于tag的查询 & 随机查询
 业务背景：从题库中，按照tag要求，随机抽取一定数量的题目。
 
