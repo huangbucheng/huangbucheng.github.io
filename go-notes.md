@@ -222,8 +222,11 @@ query.Where("`field` REGEXP ?", fmt.Sprintf("^%s[0-9]+$", prefix))
 ### 位运算
 #### 需求背景
 数据通过`visible` mask字段控制可见范围：
+
 0x01 - 全局可见
+
 0x02 - 小程序不可见
+
 对于小程序不可见的数据，`visible`可设置为`visible` & 0x0FC。小程序的查询方式为（排除设置了0x02的数据）：
 ```go
 query = query.Where("`visible`&? = 0", 0x02)
