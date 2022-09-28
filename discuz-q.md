@@ -15,7 +15,7 @@
 但是`Discuz-Q`本身有自己的账号系统，并且所有用户数据是与`Discuz-Q`系统自身的账号系统关联的，所以需要将业务系统账号转换为`Discuz-Q`账号，再将请求转发给`Discuz-Q`后台服务。
 
 
-这种需求就非常适合使用`Nginx``auth_request`来实现：
+这种需求就非常适合使用`Nginx auth_request`来实现：
 ```
 server {
         listen 80 default_server;
@@ -62,7 +62,7 @@ server {
 
 1. 如果请求不带业务`token`，则什么也不做；
 2. 如果请求带业务`token`，则查库找业务账号对应的`Discuz-Q`账号。如果不存在对应的`Discuz-Q`账号，则创建之。
-3. 用`JWT`生成`Discuz-Q``token`;
+3. 用`JWT`生成`Discuz-Q token`;
 
 服务go代码：
 ```golang
@@ -164,7 +164,7 @@ func CreateDiscuzUser(ctx context.Context, user *models.User) (
 ```
 
 
-`auth_request`之后，将`Discuz-Q``token`写入请求`Header`，然后将请求转发给`Discuz-Q`后台服务。
+`auth_request`之后，将`Discuz-Q token`写入请求`Header`，然后将请求转发给`Discuz-Q`后台服务。
 
 ### nginx auth_request 配置
 下面对`auth_request`的配置做一下解析：
@@ -185,9 +185,9 @@ server {
     }
 }
 ```
-1. `auth`服务将`Discuz``token`写在`response`的`Header: discuztoken`中，`auth_request_set`将该`token`从`$upstream_http_discuztoken`中读取出来，并保存到`$discuztoken`变量中；
-2. 再通过`fastcgi_param`将该`token`写入`request``Header: authorization`中，此处`fastcgi_param`使用的`Header`名称是`HTTP_authorization`；
-3. 通过`log_format`可以将业务`token`和`Discuz``token`记录下来调试：`log_format discuzlog ... [token=$http_token] [discuztoken=$discuztoken] ...; `
+1. `auth`服务将`Discuz token`写在`response`的`Header: discuztoken`中，`auth_request_set`将该`token`从`$upstream_http_discuztoken`中读取出来，并保存到`$discuztoken`变量中；
+2. 再通过`fastcgi_param`将该`token`写入`request`的`Header: authorization`中，此处`fastcgi_param`使用的`Header`名称是`HTTP_authorization`；
+3. 通过`log_format`可以将业务`token`和`Discuz token`记录下来调试：`log_format discuzlog ... [token=$http_token] [discuztoken=$discuztoken] ...; `
 
 
 
