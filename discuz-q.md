@@ -1,8 +1,13 @@
 # 业务系统集成Discuz-Q实践
 
 ## 集成方案
-账号打通
-服务路由
+业务系统需要集成论坛模块，方案上选择`Discuz-Q`作为论坛的功能模块集成到业务系统。在集成时，主要面临的2个问题是：账号打通 和 服务路由 的问题。
+
+`Discuz-Q`系统是一个完备的系统，有自己的账号系统，业务系统集成`Discuz-Q`系统，首先需要解决2个账号系统统一的问题。
+
+我们基于开发维护成本和解耦的考虑，没有选择修改`Discuz-Q`的账号系统，而是建立业务账号系统和`Discuz-Q`的账号系统的映射。
+
+服务路由的问题比较简单，所有`Discuz-Q`的请求，都通过子域名进入`Discuz-Q`的`Nginx`接入层，实现业务和`Discuz-Q`的路由完全分离。
 
 ## 账号打通
 用户在业务系统登录之后，不需要再登录`Discuz-Q`系统。
@@ -62,41 +67,41 @@ server {
 服务go代码：
 ```golang
 func GetDiscuzToken(c *gin.Context) {
-  // 尝试解析业务token
+	// 尝试解析业务token
 	claims, err := mw.TryParseToken(c)
 	if err != nil {
-    // token无效，则当作未登录态
+		// token无效，则当作未登录态
 		return
 	}
 
 	if claims == nil {
-    // 无业务token，则当作未登录态
+		// 无业务token，则当作未登录态
 		return
 	}
 
-  // 通过token查询业务账号
+	// 通过token查询业务账号
 	claimuser := utils.GetUser(claims)
 	if claimuser == nil {
-    // 无相应业务账号，则当作未登录态
+		// 无相应业务账号，则当作未登录态
 		return
 	}
 
-  // 查询业务账号对应的Discuz账号
+	// 查询业务账号对应的Discuz账号
 	discuzuser, err := caches.GRedisCache.GetDiscuzUser(c.Request.Context(), claimuser.Uid)
 	if err != nil {
-    // 查询异常，则当作未登录态
+		// 查询异常，则当作未登录态
 		return
 	}
   
 	if discuzuser == nil {
-    // 无对应的Discuz账号，则创建Discuz账号及映射关系
+		// 无对应的Discuz账号，则创建Discuz账号及映射关系
 		discuzuser, err = domain.CreateDiscuzUser(c.Request.Context(), claimuser)
 		if err != nil {
 			return
 		}
 	}
 
-  // 生成Discuz token
+	// 生成Discuz token
 	data := make(map[string]interface{})
 	data["sub"] = discuzuser.DiscuzUid
 	data["jti"] = "xxxx"
@@ -110,7 +115,7 @@ func GetDiscuzToken(c *gin.Context) {
 		return
 	}
 
-  // 将Discuz token写入reponse header
+	// 将Discuz token写入reponse header
 	c.Header("discuztoken", "Bearer "+token)
 }
 
@@ -145,7 +150,7 @@ func CreateDiscuzUser(ctx context.Context, user *models.User) (
 		}
 	}
 
-  // 3. 创建业务账号与Discuz账号映射关系
+	// 3. 创建业务账号与Discuz账号映射关系
 	var assoc models.DiscuzUserAssociation
 	assoc.Uid = user.Uid
 	assoc.DiscuzUid = discuzuid
@@ -161,5 +166,28 @@ func CreateDiscuzUser(ctx context.Context, user *models.User) (
 
 `auth_request`之后，将`Discuz-Q``token`写入请求`Header`，然后将请求转发给`Discuz-Q`后台服务。
 
-## 服务路由
+### nginx auth_request 配置
+下面对`auth_request`的配置做一下解析：
+```
+log_format discuzlog '$remote_addr - $remote_user [$time_local] '
+    '"$request" $status $body_bytes_sent '
+    '[token=$http_token] [discuztoken=$discuztoken] '
+    '"$http_referer" "$http_user_agent"';
+
+server {
+    location ~ \.php$ {
+	access_log /var/log/nginx/discuz.log discuzlog;
+
+	auth_request /auth;
+	auth_request_set $discuztoken $upstream_http_discuztoken;
+	fastcgi_param HTTP_authorization $discuztoken;
+	... ...
+    }
+}
+```
+1. `auth`服务将`Discuz``token`写在`response`的`Header: discuztoken`中，`auth_request_set`将该`token`从`$upstream_http_discuztoken`中读取出来，并保存到`$discuztoken`变量中；
+2. 再通过`fastcgi_param`将该`token`写入`request``Header: authorization`中，此处`fastcgi_param`使用的`Header`名称是`HTTP_authorization`；
+3. 通过`log_format`可以将业务`token`和`Discuz``token`记录下来调试：`log_format discuzlog ... [token=$http_token] [discuztoken=$discuztoken] ...; `
+
+
 
