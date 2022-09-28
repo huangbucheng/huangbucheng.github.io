@@ -120,8 +120,7 @@ func GetDiscuzToken(c *gin.Context) {
 }
 
 // 创建Discuz账号及映射关系
-func CreateDiscuzUser(ctx context.Context, user *models.User) (
-	*models.DiscuzUserAssociation, error) {
+func CreateDiscuzUser(ctx context.Context, user *models.User) (*models.DiscuzUserAssociation, error) {
 	// 1. 创建Discuz 用户 - 无密码，不支持密码登录
 	username := strconv.FormatUint(user.Uid, 10)
 	sql := "insert into discuz.users (`username`, `password`, `nickname`, `register_reason`, `created_at`, `updated_at`) values (?, ?, ?, ?, ?, ?)"
