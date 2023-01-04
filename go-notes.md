@@ -1,5 +1,22 @@
 # go 编程纪要
 
+## Go exec安全运行shell脚本
+```go
+cmdargs := []string{
+	"./run.sh",
+	shellescape.StripUnsafe(param1),
+	shellescape.StripUnsafe(param2),
+	shellescape.StripUnsafe(param3),
+}
+cmd := exec.Command("sh", "-c", shellescape.QuoteCommand(cmdargs))
+cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+
+var out []byte
+if out, err = cmd.CombinedOutput(); err != nil {
+}
+```
+程序使用exec.Command等函数执行系统命令时，如果涉及的命令或参数由外部传入，必须要对传入的参数进行校验，比如使用shellescape库进行校验，并确保闭合。
+
 ## Go语言中Kill子进程的正确姿势
 使用exec.Process.Kill子进程示例如下：
 ```go
