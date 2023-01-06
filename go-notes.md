@@ -251,7 +251,10 @@ query.Where("`field` REGEXP ?", fmt.Sprintf("^%s[0-9]+$", prefix))
 query = query.Where("`visible`&? = 0", 0x02)
 ```
 ### utf8-mb4
-TODO
+支持表情，charset使用字符集`CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci`
+```go
+db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci").AutoMigrate(&models.TableName{})
+```
 
 ## gomonkey
 ### panic: retrieve method by name failed
