@@ -139,3 +139,17 @@ order by
 limit
   1000;
 ```
+
+## int to string with leading zero
+```sql
+-- test
+> select LPAD(1, 4, 0);
++---------------+
+| LPAD(1, 4, 0) |
++---------------+
+| 0001          |
++---------------+
+
+-- convert int to string
+update t_advisor set advisor_id=LPAD(id, 4, 0);
+```
