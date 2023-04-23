@@ -40,8 +40,12 @@ nginx发现301（`proxy_intercept_errors on`），执行`@handle_redirect`进行
         location @handle_redirect {
             set $saved_redirect_location '$upstream_http_location';
             proxy_pass $saved_redirect_location;
+            proxy_http_version 1.1;
+            proxy_read_timeout 100s;
+            
             proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade"; 
+            proxy_set_header Connection $connection_upgrade;
+            proxy_set_header Host $host;
         }
     }
 ```
