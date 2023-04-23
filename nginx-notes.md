@@ -45,3 +45,7 @@ nginx发现301（`proxy_intercept_errors on`），执行`@handle_redirect`进行
         }
     }
 ```
+
+参考：
+1. https://serverfault.com/questions/423265/how-to-follow-http-redirects-inside-nginx
+2. https://stackoverflow.com/questions/20254456/intercepting-backend-301-302-redirects-proxy-pass-and-rewriting-to-another-loc/46141557#46141557
