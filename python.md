@@ -1,5 +1,26 @@
+## locale.Error: unsupported locale setting
+问题背景：
+
+`python`包依赖特定语言包，查看当前安装的语言包：
+```# locale -a
+C
+POSIX
+```
+
+
+解决方案：安装语言包
+
+
+```
+yum reinstall -y glibc-common
+locale -a
+```
+
+
+
 ## pip install with --extra-index-url
 问题背景：
+
 `pip install -i`指定内部`Base URL of the Python Package Index`时，所安装的包依赖`setuptools`更高级版本，但是`-i`所指的源中没有`setuptools`包。
 
 
