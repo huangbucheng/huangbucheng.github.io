@@ -26,4 +26,6 @@ locale -a
 
 解决方案：添加`--extra-index-url`指定默认源
 
-`/usr/local/bin/python3.8 -m pip install  venus-api-base -i https://mirrors.my.com/repository/pypi/simple/ --trusted-host mirrors.my.com --extra-index-url https://pypi.python.org/simple`
+```
+/usr/local/bin/python3.8 -m pip install  venus-api-base -i https://mirrors.my.com/repository/pypi/simple/ --trusted-host mirrors.my.com --extra-index-url https://pypi.python.org/simple
+```
