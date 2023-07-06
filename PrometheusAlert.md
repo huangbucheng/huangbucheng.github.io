@@ -1,11 +1,54 @@
 # 基于Prometheus的监控告警部署配置
 
 ## 1. 创建namespace、sa账号
+```yaml
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: prometheus
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/proxy
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: monitor-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+- kind: ServiceAccount
+  name: prometheus
+  namespace: monitor-sa
+```
+or
+```
 kubectl create ns monitor-sa
 kubectl create serviceaccount prometheus -n monitor-sa
-
-### 把sa账号prometheus通过clusterrolebing绑定到clusterrole上
 kubectl create clusterrolebinding moniror-clusterrolebinding -n monitor-sa --clusterrole=cluster-admin --serviceaccount=monitor-sa:prometheus
+```
 
 ## 2. 创建数据挂载目录
 ```shell
@@ -41,16 +84,11 @@ data:
       - /etc/prometheus/alertrules.yml
 
     scrape_configs:
-    - job_name: '测试环境'
+    - job_name: 'xxxservice'
       # metrics_path defaults to '/metrics'
       # scheme defaults to 'http'.
       static_configs:
       - targets: ['10.0.0.2:30457']
-    - job_name: '正式环境'
-      # metrics_path defaults to '/metrics'
-      # scheme defaults to 'http'.
-      static_configs:
-      - targets: ['10.1.0.1:31201']
 
   alertrules.yml: |
     groups:
@@ -125,7 +163,7 @@ spec:
       annotations:
         prometheus.io/scrape: 'false'
     spec:
-      serviceAccountName: monitor
+      serviceAccountName: prometheus
       containers:
       - name: prometheus
         image: prom/prometheus
@@ -618,10 +656,39 @@ spec:
   selector:
     k8s-app: grafana
 ```
+### scrape configs
+```yaml
+    scrape_configs:
+    - job_name: '正式环境'
+      # metrics_path defaults to '/metrics'
+      # scheme defaults to 'http'.
+      static_configs:
+      - targets: ['10.1.0.1:30457']
+    - job_name: 'webservice'
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      kubernetes_sd_configs:
+      - role: service
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: backend-metrics
+```
+webservice filter by service name `backend-metrics`。
 
 ## 4. 部署prom,alertmanager和grafana
 kubectl apply -f prom.yaml # prom and alertmanager
 kubectl apply -f prometheus-alert-center.yaml
 kubectl apply -f grafana.yaml
 
-# 5. 配置grafana的datasource
+# 5. 配置grafana
+## add prometheus datasource
+configure Prometheus server URL
+
+## create dashboard and panel
+### qps query
+```
+rate(ginfra_http_request_count{path=~"/api/module/.*"}[$__rate_interval])
+```
+
