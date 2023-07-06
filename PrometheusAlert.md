@@ -2,10 +2,10 @@
 
 ## 1. 创建namespace、sa账号
 kubectl create ns monitor-sa
-kubectl create serviceaccount monitor -n monitor-sa
+kubectl create serviceaccount prometheus -n monitor-sa
 
-### 把sa账号monitor通过clusterrolebing绑定到clusterrole上
-kubectl create clusterrolebinding moniror-clusterrolebinding -n monitor-sa --clusterrole=cluster-admin --serviceaccount=monitor-sa:monitor
+### 把sa账号prometheus通过clusterrolebing绑定到clusterrole上
+kubectl create clusterrolebinding moniror-clusterrolebinding -n monitor-sa --clusterrole=cluster-admin --serviceaccount=monitor-sa:prometheus
 
 ## 2. 创建数据挂载目录
 ```shell
