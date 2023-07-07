@@ -691,4 +691,8 @@ configure Prometheus server URL
 ```
 rate(ginfra_http_request_count{path=~"/api/module/.*"}[$__rate_interval])
 ```
+### total qps
+```
+sum by(job) (rate(ginfra_http_request_count[$__rate_interval]))
+```
 
