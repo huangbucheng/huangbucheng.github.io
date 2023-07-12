@@ -1,5 +1,47 @@
 # go 编程纪要
 
+## Customizing Protobuf JSON Serialization in Go
+```protobuf
+syntax = "proto3";
+package Project;
+import "google/protobuf/timestamp.proto";
+
+message ProjectConf{
+	string Project = 1; 
+	string Title = 2 [json_name="title"];
+        google.protobuf.Timestamp created_at = 3;
+}
+```
+使用`json_name`可以修改字段json序列化时的名称。
+
+使用`protojson`序列化
+```
+package main
+
+import (
+	"fmt"
+	"protojsonfmt/todo"
+
+	"github.com/google/uuid"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+func main() {
+	conf := &Project.ProjectConf{
+		Project:   "社会主义建设",
+		Title:     "共同富裕",
+		CreatedAt: timestamppb.Now(),
+	}
+
+	jsonBytes, _ := protojson.Marshal(conf)
+	fmt.Println(string(jsonBytes))
+}
+```
+
+
+ref: https://seb-nyberg.medium.com/customizing-protobuf-json-serialization-in-golang-6c58b5890356
+
 ## Go exec安全运行shell脚本
 ```go
 cmdargs := []string{
