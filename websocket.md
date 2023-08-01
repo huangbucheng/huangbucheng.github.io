@@ -1,4 +1,7 @@
 ## use websocket with gin
+业务背景：实现一个websocket代理，负载分配websocket服务器给客户端。分配成功后，返回301重定向，上一跳的nginx拦截301，代理客户端执行重定向操作（避免服务器占用大量公网IP）；分配失败时，返回code和message。
+
+
 ```go
 import (
 	"context"
@@ -37,7 +40,7 @@ func NewGame(c *gin.Context) {
 	// get uid from cookie
 	var uid uint64
 
-	runner, err := alloc_gamer(c.Request.Context(), game, stage, scene, cid, uid)
+	runner, err := alloc_runner(c.Request.Context(), game, stage, scene, cid, uid)
 	if err != nil {
 		OnWsError(c, err)
 		return
@@ -56,7 +59,6 @@ func OnWsError(c *gin.Context, wserr error) {
 		return
 	}
 
-	// 关闭连接释放资源
 	var closeCode int
 	message := wserr.Error()
 	switch errcode.ErrorCode(wserr) {
@@ -71,6 +73,7 @@ func OnWsError(c *gin.Context, wserr error) {
 		message = "暂无空闲资源，请稍后再试"
 	}
 
+	// 关闭连接释放资源
 	closeMessage := websocket.FormatCloseMessage(closeCode, message)
 	deadline := time.Now().Add(time.Second)
 	e := ws.WriteControl(websocket.CloseMessage, closeMessage, deadline)
