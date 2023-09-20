@@ -96,4 +96,4 @@ An OpenAPI definition can then be used by documentation generation tools to disp
 ![image](https://github.com/huangbucheng/huangbucheng.github.io/assets/16696251/d478bec3-ca96-41ac-919a-11016242d437)
 
 ## 如何自动化生成OAS
-
+下面介绍一下如何自动的从go代码中自动生成OAS申明。
