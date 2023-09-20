@@ -184,3 +184,9 @@ swagger generate spec -o ./docs/swagger.json
 2. `gin-swagger` to set up webservice to server HTML Docs
 3. `redoc-cli bundle -o index.html swagger.json`
 
+## API 管理解决方案
+1. yapi：YApi是高效、易用、功能强大的API管理平台，旨在为开发、产品、测试人员提供更优雅的接口管理服务。YApi不仅提供了常用的接口管理功能，还提供了权限管理、Mock数据、Swagger数据导入等功能，总之功能很强大！
+2. Apifox：Apifox 接口文档遵循 OpenApi 3.0 (原 Swagger)、JSON Schema 规范的同时，提供了非常好用的可视化文档管理功能。
+4. showdoc：https://www.showdoc.com.cn/
+5. Eolinker
+6. DOClever
