@@ -179,3 +179,8 @@ swagger generate spec -o ./docs/swagger.json
 ## 如何通过OAS生成代码
 `npx @openapitools/openapi-generator-cli generate -i docs/swagger.json -g javascript -o sdk/js`
 
+## OAS to HTML
+1. `VSCode` + `Swagger Viewer`
+2. `gin-swagger` to set up webservice to server HTML Docs
+3. `redoc-cli bundle -o index.html swagger.json`
+
