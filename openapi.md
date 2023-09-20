@@ -8,7 +8,7 @@
 An OpenAPI definition can then be used by documentation generation tools to display the API, code generation tools to generate servers and clients in various programming languages, testing tools, and many other use cases.
 "
 
-示例
+以一个简单的OAS申明为例：
 ```
 {
   "swagger": "2.0",
@@ -92,4 +92,8 @@ An OpenAPI definition can then be used by documentation generation tools to disp
 }
 ```
 
-## 
+通过工具可以将OAS申明转换为HMTL的接口说明文档：
+![image](https://github.com/huangbucheng/huangbucheng.github.io/assets/16696251/d478bec3-ca96-41ac-919a-11016242d437)
+
+## 如何自动化生成OAS
+
