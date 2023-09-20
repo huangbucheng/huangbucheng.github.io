@@ -9,6 +9,7 @@ An OpenAPI definition can then be used by documentation generation tools to disp
 "
 
 
+
 传统的开发方式，先编写接口说明书，然后前后端再根据接口说明独立开发。
 
 这种方式比较繁琐，前后端开发人员都需要使用相应的开发语言翻译接口协议，并且需要同时维护接口文档和协议代码，容易出现文档代码不一致的情况。
@@ -16,6 +17,7 @@ An OpenAPI definition can then be used by documentation generation tools to disp
 以`protobuf`为代表的`rpc`协议框架，统一了协议的申明和实现，协议文件定义好后，使用方可以通过工具从协议文件生成相应的接口代码。
 
 在`RESTful`领域，起源于`swagger`的`Open API`及相关的工具生态同样统一协议申明和代码实现。
+
 
 
 
