@@ -137,7 +137,7 @@ An OpenAPI definition can then be used by documentation generation tools to disp
 
 package docs
 
-// swagger:route POST /api/v1/Login Login
+// swagger:route POST /api/v1/Login account Login
 // 登录请求，校验成功获得Token
 //
 // 账号+密码方式登录系统，支持学习账号、手机号、邮箱号
@@ -170,7 +170,7 @@ type LoginResponseWrapper struct {
 然后使用`go-swagger`基于`swagger annation`生成`OAS`：
 ```
 go install github.com/go-swagger/go-swagger/cmd/swagger@latest
-swagger generate spec -o ./docs/swagger.json
+swagger generate spec --include-tag=account -o ./docs/account.json
 ```
 
 ### protobuf to swagger
