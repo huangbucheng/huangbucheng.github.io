@@ -1,3 +1,14 @@
+## __dir__
+Python offers an in-built method to print out all attributes of an object (Now, this object may be anything in Python). This method is also known as a magic method or a dunder method in Python.
+
+Syntax:
+```
+    print(objectName.__dir__())
+
+    print(obj.__dict__.keys())
+    print(obj.__dir__())
+```
+
 ## locale.Error: unsupported locale setting
 问题背景：
 
