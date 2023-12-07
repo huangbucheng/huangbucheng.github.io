@@ -663,7 +663,8 @@ spec:
       # metrics_path defaults to '/metrics'
       # scheme defaults to 'http'.
       static_configs:
-      - targets: ['10.1.0.1:30457']
+      - targets: ['10.1.253.29:30457']
+
     - job_name: 'webservice'
       tls_config:
         ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
@@ -674,6 +675,24 @@ spec:
       - source_labels: [__meta_kubernetes_service_name]
         action: keep
         regex: backend-metrics
+
+    - job_name: '运行调度'
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      kubernetes_sd_configs:
+      - role: pod
+      relabel_configs:
+      # look for pods with the label 'qcloud_app:scheduler'
+      - source_labels: [__meta_kubernetes_pod_label_qcloud_app]
+        action: keep
+        regex: scheduler
+      # replace metric port
+      - source_labels: [__meta_kubernetes_pod_ip]
+        action: replace
+        regex: ([^:]+):.*
+        replacement: $1:9100
+        target_label: __meta_kubernetes_pod_ip
 ```
 webservice filter by service name `backend-metrics`。
 
