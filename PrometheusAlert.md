@@ -715,3 +715,15 @@ rate(ginfra_http_request_count{path=~"/api/module/.*"}[$__rate_interval])
 sum by(job) (rate(ginfra_http_request_count[$__rate_interval]))
 ```
 
+### 每秒调度次数(CounterVec)
+```
+sum by(tasktype) (increase(ginfra_record_scheduled[$__rate_interval]))
+```
+![image](https://github.com/huangbucheng/huangbucheng.github.io/assets/16696251/bc0c18fa-2e2e-4551-a585-0442c88f1889)
+
+### 平均运行耗时(SummaryVec)
+```
+sum(rate(ginfra_record_duration_sum[$__interval])) by (tasktype) / sum(rate(ginfra_record_duration_count[$__interval])) by (tasktype)
+```
+![image](https://github.com/huangbucheng/huangbucheng.github.io/assets/16696251/f7e605a7-65d1-44c8-bb94-78c23e9a32ab)
+
