@@ -298,6 +298,12 @@ query = query.Where("`visible`&? = 0", 0x02)
 db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci").AutoMigrate(&models.TableName{})
 ```
 
+### set with conditions
+更新积分字段，如果积分不能为负数，则可参考如下示例：
+```go
+fields1["Credit"] = gorm.Expr("case when credit + ? >=0 then credit + ? else 0 end", credit_diff, credit_diff)
+```
+
 ## gomonkey
 ### panic: retrieve method by name failed
 `go test --cover -v ./...` 运行单元测试，报错：`panic: retrieve method by name failed`
