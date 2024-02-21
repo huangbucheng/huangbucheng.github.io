@@ -1,7 +1,7 @@
 # algo
 https://www.hello-algo.com/
 
-# pythontutor[debug可视化]
+# pythontutor【debug可视化】
 Online Compiler, Visual Debugger, and AI Tutor for Python, Java, C, C++, and JavaScript  
 https://pythontutor.com/
 
