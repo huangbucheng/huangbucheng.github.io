@@ -1,5 +1,5 @@
 # go 编程纪要
-
+[TOC]
 ## Customizing Protobuf JSON Serialization in Go
 ```protobuf
 syntax = "proto3";
