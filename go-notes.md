@@ -98,11 +98,66 @@ if out, err = cmd.CombinedOutput(); err != nil {
 	days, _ := strconv.Atoi(excelDate)
 	t := excelTime.Add(time.Second * time.Duration(days*86400))
 ```
+## interface{}的别名any【Go 1.18+】
+`go 1.18`内置了对`interface{}`的别名`any`。
+```go
+type any = interface{}
+```
+
+## 泛型【Go 1.18+】
+在`go 1.18`之后，最大的变化就是泛型的支持，现在可以在函数或者Struct中使用泛型。
+```go
+// 泛型函数
+func Filter[T any](s []T, f func(s T) bool) (ns []T) {
+    for i := range s {
+       if f(s[i]) {
+          ns = append(ns, s[i])
+       }
+    }
+    return
+}
+
+
+// 泛型方法
+type Filter[T any] struct {
+}
+
+func (t Filter[T]) Do(s []T, f func(s T) bool) (ns []T) {
+    for i := range s {
+       if f(s[i]) {
+          ns = append(ns, s[i])
+       }
+    }
+    return
+}
+```
+
 
 ## time.Since 注意事项
 在使用`time.Since`进行时长比较时，有2种情况注意区分：
 1. `time.Since` 与 `time.Duration`（预定义的`time.Second`等 或 通过`time.ParseDuration`解析得到的`time.Duration`）比较OK；
 2. `time.Since` 与 `time.Duration(int)` 比较，容易有时间单位不一致的问题，此时的解决办法是对齐单位，如：`time.Since().Second()` 与 `time.Duration(int)`；
+
+## time.DateTime【Go 1.20+】
+在`go 1.20`之前，形如`2006-01-02 15:04:05`的时间格式 没有内置在`time`包中，必须要自己手动定义。`go 1.20`在`time`包内添加了这种非常常见的时间格式。
+```go
+DateTime   = "2006-01-02 15:04:05"
+DateOnly   = "2006-01-02"
+TimeOnly   = "15:04:05"
+```
+
+## string和bytes互相转换【Go 1.20+】
+`string`和`bytes`互转时拷贝开销很大，高性能场景下，一般会使用没有拷贝开销的转换方式。  
+在`go 1.20`中，`reflect.StringHeader`被废弃，官方提供`unsafe.SliceData`、`unsafe.String`和`unsafe.StringData`用于`string`和`bytes`的相互转化。
+```go
+func toBytes(str string) []byte {
+    return unsafe.Slice(unsafe.StringData(str), len(str))
+}
+
+func toString(bys []byte) string {
+    return unsafe.String(unsafe.SliceData(bys), len(bys))
+}
+```
 
 ## gorm 用例
 ### IgnoreRecordNotFoundError 忽略RecordNotFound日志
