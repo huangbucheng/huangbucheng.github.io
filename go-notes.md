@@ -42,6 +42,40 @@ func main() {
 
 ref: https://seb-nyberg.medium.com/customizing-protobuf-json-serialization-in-golang-6c58b5890356
 
+## Customizing Object Serialization with zap in Go
+```go
+
+type UserInfo struct {
+	UserId      string
+	UserName    string
+}
+type BuzParams struct {
+	RequestID     string
+	Users []UserInfo
+}
+
+func (s *UserInfo) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("UserId", s.UserId)
+	enc.AddString("UserName", s.UserName)
+	return nil
+}
+
+type loggableUserInfo []UserParams
+
+func (s loggableUserInfo) MarshalLogArray(enc zapcore.ArrayEncoder) error {
+	for _, v := range s {
+		enc.AppendObject(&v)
+	}
+	return nil
+}
+
+func (s *BuzParams) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddString("RequestID", s.RequestID)
+	enc.AddArray("Users", loggableUserParams(s.Users))
+	return nil
+}
+```
+
 ## Go exec安全运行shell脚本
 ```go
 cmdargs := []string{
