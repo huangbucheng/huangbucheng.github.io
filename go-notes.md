@@ -301,6 +301,29 @@ select * from t_match_config order by CASE WHEN `end_time` > now() then `id` ELS
 ```
 【参考】(https://learnsql.com/blog/order-by-specific-value/)
 
+### `index_merge` 注意事项
+```
+MySQL [arena]> explain SELECT * FROM `t_run_record_backup` WHERE (`map_id` = '<mapid>' AND (`uid1` = 10001 or `uid2` = 10002 )) AND `t_run_record_backup`.`deleted_at` IS NULL ORDER BY id desc LIMIT 10 OFFSET 10
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: t_run_record_backup
+   partitions: NULL
+         type: index_merge
+possible_keys: idx_t_run_record_backup_map_id,idx_t_run_record_backup_deleted_at,idx_t_run_record_backup_uid1,idx_t_run_record_backup_uid2
+          key: idx_t_run_record_backup_uid1,idx_t_run_record_backup_uid2
+      key_len: 9,9
+          ref: NULL
+         rows: 1847
+     filtered: 11.02
+        Extra: Using union(idx_t_run_record_backup_uid1,idx_t_run_record_backup_uid2); Using where; Using filesort
+```
+当`t_run_record_backup`表中数据量达到200W+时，查询耗时普遍到3、4秒，尝试从索引方面去优化，始终没能得到理想效果。  
+当尝试把查询优化为2步之后，耗时得到明显优化：  
+1. 查询`id`列表：`SELECT id FROM `t_run_record_backup` WHERE (`map_id` = '<mapid>' AND (`uid1` = 10001 or `uid2` = 10002 )) AND `t_run_record_backup`.`deleted_at` IS NULL ORDER BY id desc LIMIT 10 OFFSET 10`
+2. 根据`id`列表查询记录数据。
+再次证明，少用`select *`，只查询需要的字段。
+
 ### Join - 1 v N场景下的left join
 业务背景：翻页查询所有活动列表，并且返回用户在活动中的状态，尚未未参加的活动也需要返回。
 
