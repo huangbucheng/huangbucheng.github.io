@@ -6,7 +6,7 @@ Online Compiler, Visual Debugger, and AI Tutor for Python, Java, C, C++, and Jav
 https://pythontutor.com/
 
 # streamlit
-Streamlit turns data scripts into shareable web apps in minutes.
+Streamlit turns data scripts into shareable web apps in minutes.  
 https://streamlit.io/
 
 # desmos
