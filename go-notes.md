@@ -76,7 +76,7 @@ func (s *BuzParams) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 }
 ```
 
-## Go exec安全运行shell脚本
+## Go Command 安全运行shell脚本
 ```go
 cmdargs := []string{
 	"./run.sh",
@@ -92,6 +92,16 @@ if out, err = cmd.CombinedOutput(); err != nil {
 }
 ```
 程序使用exec.Command等函数执行系统命令时，如果涉及的命令或参数由外部传入，必须要对传入的参数进行校验，比如使用shellescape库进行校验，并确保闭合。
+
+## Go Command Env
+```go
+runcmd := "python3"
+arg := filepath.Join(rundir, "main.py")
+cmd := exec.Command(runcmd, arg)
+cmd.Dir = rundir
+cmd.Env = os.Environ()
+cmd.Env = append(cmd.Env, "PYTHONIOENCODING=utf-8")
+```
 
 ## Go语言中Kill子进程的正确姿势
 使用exec.Process.Kill子进程示例如下：
