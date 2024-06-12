@@ -715,6 +715,11 @@ rate(ginfra_http_request_count{path=~"/api/module/.*"}[$__rate_interval])
 sum by(job) (rate(ginfra_http_request_count[$__rate_interval]))
 ```
 
+### 每秒调度次数(CounterVec - filtered zero values)
+```
+sum by(tasktype) (increase(ginfra_record_scheduled[$__rate_interval])) > 0
+```
+
 ### 每秒调度次数(CounterVec)
 ```
 sum by(tasktype) (increase(ginfra_record_scheduled[$__rate_interval]))
