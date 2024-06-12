@@ -730,7 +730,8 @@ sum by(tasktype) (increase(ginfra_record_scheduled[$__rate_interval]))
 ```
 sum(rate(ginfra_record_duration_sum[$__interval])) by (tasktype) / sum(rate(ginfra_record_duration_count[$__interval])) by (tasktype)
 ```
-![image](https://github.com/huangbucheng/huangbucheng.github.io/assets/16696251/f7e605a7-65d1-44c8-bb94-78c23e9a32ab)  
+<img width="1286" alt="image" src="https://github.com/huangbucheng/huangbucheng.github.io/assets/16696251/98515518-4060-4417-aa39-113dc7a80fa1">
+
 ref.  
 1. https://www.robustperception.io/how-does-a-prometheus-summary-work/  
 2. https://prometheus.io/docs/practices/histograms/  
