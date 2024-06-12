@@ -724,7 +724,8 @@ sum by(tasktype) (increase(ginfra_record_scheduled[$__rate_interval])) > 0
 ```
 sum by(tasktype) (increase(ginfra_record_scheduled[$__rate_interval]))
 ```
-![image](https://github.com/huangbucheng/huangbucheng.github.io/assets/16696251/bc0c18fa-2e2e-4551-a585-0442c88f1889)
+<img width="1289" alt="image" src="https://github.com/huangbucheng/huangbucheng.github.io/assets/16696251/4a50b6b1-9ed3-48f8-9301-f0aee9b97209">
+
 
 ### 平均运行耗时(SummaryVec)
 ```
