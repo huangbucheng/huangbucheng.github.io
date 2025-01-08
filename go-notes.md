@@ -76,7 +76,7 @@ func (s *BuzParams) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 }
 ```
 
-## embeded struct serialization
+## embeded struct serialization in bson
 ```go
 type QuestionBasicConf struct {
 	// 编号
