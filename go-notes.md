@@ -76,6 +76,44 @@ func (s *BuzParams) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 }
 ```
 
+## embeded struct serialization
+```go
+type QuestionBasicConf struct {
+	// 编号
+	ID primitive.ObjectID `bson:"_id,omitempty"`
+	// 创建者
+	Creator string `bson:"creator"`
+	// 创建时间
+	CreatedAt time.Time `bson:"created_at"`
+	// ...
+}
+
+type QuestionConf struct {
+	QuestionBasicConf `bson:",inline"`
+
+	// 题目答案
+	QuestAnswers []string `bson:"quest_answers"`
+}
+```
+未加`bson inline tag`的情况下，`embeded struct`是以`object`形式嵌入在序列化的数据中：
+```
+{
+    _id: ObjectId("677e3577fb23d62fcb984fe3"),
+    questionbasicconf: {
+      creator: 'god',
+      created_at: ISODate("2025-01-08T08:21:11.888Z"),
+    }
+}
+```
+标明`bson inline tag`的情况下，其序列化行为与json一致，是平铺展开的：
+```
+{
+    _id: ObjectId("677e3a77a4873bc60a47b9ff"),
+    creator: 'god',
+    created_at: ISODate("2025-01-08T08:42:31.327Z"),
+}
+```
+
 ## Go Command 安全运行shell脚本
 ```go
 cmdargs := []string{
