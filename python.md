@@ -1,3 +1,33 @@
+## 在 Python 中，将字符串反序列化为对象
+除了`json`, `pickle`，如果字符串表示的是 Python 的字面量结构（如元组、列表、字典等），可以使用 ast.literal_eval。
+```python
+import ast
+
+# 字符串表示的字典
+literal_string = "{'name': 'Alice', 'age': 30}"
+
+# 反序列化为字典
+obj = ast.literal_eval(literal_string)
+
+# 输出结果
+print(obj)  # 输出: {'name': 'Alice', 'age': 30}
+print(type(obj))  # 输出: <class 'dict'>
+```
+
+```python
+import ast
+
+# 字符串表示的字符串
+literal_string = "\"str\""
+
+# 反序列化为字符串
+obj = ast.literal_eval(literal_string)
+
+# 输出结果
+print(obj)  # 输出: AA
+print(type(obj))  # 输出: <class 'str'>
+```
+
 ## __dir__
 Python offers an in-built method to print out all attributes of an object (Now, this object may be anything in Python). This method is also known as a magic method or a dunder method in Python.
 
