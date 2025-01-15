@@ -368,6 +368,17 @@ select * from t_match_config order by CASE WHEN `end_time` > now() then `id` ELS
 ```
 【参考】(https://learnsql.com/blog/order-by-specific-value/)
 
+### count distinct multi fields
+在 SQL 中，如果你想计算多个字段的组合的数量:
+```sql
+select count(distinct match_id, match_stage, match_group) from t_match where quest_set_id = 'xxxx';
+```
+
+在 GORM 中，如果你想计算多个字段的组合的数量:
+```go
+err = count_query.Model(&Match{}).Where("quest_set_id = ?", "xxxx").Select("count(distinct match_id, match_stage, match_group)").Count(&total).Error
+```
+
 ### `index_merge` 注意事项
 ```
 MySQL [arena]> explain SELECT * FROM `t_run_record_backup` WHERE (`map_id` = '<mapid>' AND (`uid1` = 10001 or `uid2` = 10002 )) AND `t_run_record_backup`.`deleted_at` IS NULL ORDER BY id desc LIMIT 10 OFFSET 10
