@@ -153,3 +153,34 @@ limit
 -- convert int to string
 update t_advisor set advisor_id=LPAD(id, 4, 0);
 ```
+
+## 查询自定义多行数据
+Assume you have a table sales with columns id, product, and amount.
+
+id	product	amount
+1	Product A	100
+2	Product B	200
+3	Product C	300
+
+```sql
+SELECT 
+    'Total Sales' AS description, 
+    SUM(amount) AS calculated_value
+FROM sales
+UNION ALL
+SELECT 
+    'Average Sales' AS description, 
+    AVG(amount) AS calculated_value
+FROM sales;
+```
+
+## row index
+```sql
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY year, month) AS row_index,
+    year,
+    month,
+    total_followers
+FROM 
+    followers_by_month;
+```
